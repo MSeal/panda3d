@@ -310,7 +310,7 @@ def parseopts(args):
     is_win7 = False
     if GetHost() == "windows":
         if (STRMSPLATFORMVERSION not in ['winserver2003r2', 'win60A']):
-            platsdk = GetRegistryKey("SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows\\v7.1", "InstallationFolder")
+            platsdk = GetRegistryKey("SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows\\v8.0", "InstallationFolder")
 
     if sys.platform == "win32":
         # Note: not available in cygwin.

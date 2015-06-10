@@ -1937,16 +1937,16 @@ def SdkLocatePython(prefer_thirdparty_python=False):
 
 def SdkLocateVisualStudio():
     if (GetHost() != "windows"): return
-    vcdir = GetRegistryKey("SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VC7", "10.0")
+    vcdir = GetRegistryKey("SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VC7", "11.0")
     if (vcdir != 0) and (vcdir[-4:] == "\\VC\\"):
         vcdir = vcdir[:-3]
         SDK["VISUALSTUDIO"] = vcdir
 
-    elif (os.path.isfile("C:\\Program Files\\Microsoft Visual Studio 10.0\\VC\\bin\\cl.exe")):
-        SDK["VISUALSTUDIO"] = "C:\\Program Files\\Microsoft Visual Studio 10.0\\"
+    elif (os.path.isfile("C:\\Program Files\\Microsoft Visual Studio 11.0\\VC\\bin\\cl.exe")):
+        SDK["VISUALSTUDIO"] = "C:\\Program Files\\Microsoft Visual Studio 11.0\\"
 
-    elif (os.path.isfile("C:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\bin\\cl.exe")):
-        SDK["VISUALSTUDIO"] = "C:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\"
+    elif (os.path.isfile("C:\\Program Files (x86)\\Microsoft Visual Studio 11.0\\VC\\bin\\cl.exe")):
+        SDK["VISUALSTUDIO"] = "C:\\Program Files (x86)\\Microsoft Visual Studio 11.0\\"
 
     elif "VCINSTALLDIR" in os.environ:
         vcdir = os.environ["VCINSTALLDIR"]
@@ -1961,18 +1961,18 @@ def SdkLocateMSPlatform(strMode = 'default'):
     if (GetHost() != "windows"): return
     platsdk = None
 
-    platsdk = GetRegistryKey("SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows\\v7.1", "InstallationFolder")
+    platsdk = GetRegistryKey("SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows\\v8.0", "InstallationFolder")
     if (platsdk and not os.path.isdir(platsdk)):
         platsdk = None
 
     if not platsdk:
         # Most common location.  Worth a try.
-        platsdk = "C:\\Program Files\\Microsoft SDKs\\Windows\\v7.1"
+        platsdk = "C:\\Program Files\\Microsoft SDKs\\Windows\\v8.0"
         if not os.path.isdir(platsdk):
             platsdk = None
 
     if not platsdk:
-        exit("Couldn't find Windows SDK v7.1")
+        exit("Couldn't find Windows SDK v8.0")
 
     if not platsdk.endswith("\\"):
         platsdk += "\\"
@@ -2206,7 +2206,7 @@ def SetupVisualStudioEnviron():
 
     binpath = SDK["VISUALSTUDIO"] + "VC\\bin\\" + bindir
     if not os.path.isdir(binpath):
-        exit("Couldn't find compilers in %s.  You may need to install the Windows SDK 7.1 and the Visual C++ 2010 SP1 Compiler Update for Windows SDK 7.1.")
+        exit("Couldn't find compilers in %s.  You may need to install the Windows SDK 8.0 and the Visual C++ 2011 SP1 Compiler Update for Windows SDK 8.0.")
 
     AddToPathEnv("PATH",    binpath)
     AddToPathEnv("PATH",    SDK["VISUALSTUDIO"] + "Common7\\IDE")
@@ -2226,8 +2226,17 @@ def SetupVisualStudioEnviron():
         AddToPathEnv("LIB", SDK["MSPLATFORM"] + "lib\\x64")
     elif (os.path.isdir(SDK["MSPLATFORM"] + "lib\\amd64")):
         AddToPathEnv("LIB", SDK["MSPLATFORM"] + "lib\\amd64")
+    elif (os.path.isdir(SDK["MSPLATFORM"] + "lib\\win8\\um\\x64")):
+        AddToPathEnv("LIB", SDK["MSPLATFORM"] + "lib\\win8\\um\\x64")
     else:
         exit("Could not locate 64-bits libraries in Platform SDK!")
+
+    if (arch != 'x64'):
+        AddToPathEnv("PATH", SDK["MSPLATFORM"] + "bin\\x86")
+    elif (os.path.isdir(SDK["MSPLATFORM"] + "bin\\x64")):
+        AddToPathEnv("PATH", SDK["MSPLATFORM"] + "bin\\x64")
+    else:
+        exit("Could not locate 64-bits binaries in Platform SDK!")
 
 ########################################################################
 #
